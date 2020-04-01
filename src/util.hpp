@@ -8,6 +8,9 @@
 #include <assimp/mesh.h>
 #include <assimp/postprocess.h>
 #include <opencv2/core.hpp>
+#include <pcl/point_cloud.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/point_types.h>
 
 void load_obj(const std::string obj_path,
 			  cv::Vec3f& lbn_vertex,
@@ -68,6 +71,20 @@ void load_obj(const std::string obj_path,
             normals.push_back(vn);
         }
     }
+}
+
+void convert_cv2pcl(const std::vector<cv::Vec3f>& vertices, pcl::PointCloud<pcl::PointXYZ>::Ptr& clouds)
+{
+	clouds->width  = vertices.size();
+	clouds->height = 1;
+	clouds->points.resize(clouds->width * clouds->height);
+
+	for (std::size_t i=0; i<clouds->points.size(); ++i)
+	{
+		clouds->points[i].x = vertices[i][0];
+		clouds->points[i].y = vertices[i][1];
+		clouds->points[i].z = vertices[i][2];
+	}
 }
 
 #endif /* UTIL_HPP */
